@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t perryogwuche/client-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true perryogwuche/client-test npm test -- --coverage
+
+after_success:
+  - docker build -t perryogwuche/multi-client ./client
+  - docker build -t perryogwuche/multi-nginx ./nginx
+  - docker build -t perryogwuche/multi-server ./server
+  - docker build -t perryogwuche/multi-worker ./worker
+  # Log into to docker cli
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" -- password-stdin
+
+# take those images and push them to docker hub
+  - docker push perryogwuche/multi-client
+  - docker push perryogwuche/multi-nginx
+  - docker push perryogwuche/multi-server
+  - docker push perryogwuche/multi-worker
