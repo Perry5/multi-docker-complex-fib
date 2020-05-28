@@ -21,3 +21,16 @@ after_success:
   - docker push perryogwuche/multi-nginx
   - docker push perryogwuche/multi-server
   - docker push perryogwuche/multi-worker
+
+deploy:
+  edge: true
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "multi-docker"
+  env: "MultiDocker-env-1"
+  bucket_name: "elasticbeanstalk-us-east-1-397700346479"
+  bucket_path: "docker-multi"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
